@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel Admin — Fluxx Code</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#061224;--bg-2:#0E1E36;--ciano:#22D3EE;--roxo:#1E5EFF;--texto:#F0F6FF;--texto-2:#8FA8C7;--borda:rgba(120,180,255,.15);--perigo:#EF4444;--verde:#22C55E;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--texto);min-height:100vh;padding:20px;line-height:1.6;}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(800px 500px at 15% 0%, rgba(34,211,238,.14), transparent 60%),radial-gradient(700px 500px at 90% 10%, rgba(30,94,255,.16), transparent 60%);}
+.container{max-width:1000px;margin:0 auto;}
+.logo-wrap{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 auto 18px;}
+.logo-wrap .logo-circle{width:60px;height:60px;border-radius:50%;overflow:hidden;position:relative;flex-shrink:0;background:#0E1E36;}
+.logo-wrap .logo-circle img{width:100%;height:100%;object-fit:cover;display:block;}
+.logo-wrap .logo-text{font-family:'Space Grotesk',sans-serif;font-weight:700;line-height:1;text-align:left;}
+.logo-wrap .logo-text strong{color:var(--texto);display:block;font-size:1.15rem;letter-spacing:-.02em;}
+.logo-wrap .logo-text span{color:var(--ciano);font-size:.72rem;letter-spacing:.3em;font-weight:600;}
+#loginBox{max-width:420px;margin:80px auto;background:linear-gradient(165deg,#0E1E36,#061224);border:1px solid var(--borda);border-radius:20px;padding:40px 32px;text-align:center;box-shadow:0 20px 60px rgba(0,10,30,.6);}
+#loginBox h1{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;margin:0 0 6px;}
+.sub{color:var(--texto-2);font-size:.9rem;margin:0 0 24px;}
+label{display:block;text-align:left;font-size:.82rem;font-weight:600;color:var(--texto-2);margin-bottom:6px;}
+input[type=password],input[type=text]{width:100%;padding:13px 15px;border-radius:12px;background:rgba(0,0,0,.35);border:1px solid var(--borda);color:var(--texto);font:inherit;font-size:.95rem;}
+input:focus{outline:none;border-color:var(--ciano);}
+button{cursor:pointer;font:inherit;}
+.btn-primary{width:100%;padding:14px;margin-top:16px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--ciano),var(--roxo));color:#061224;font-weight:700;font-size:1rem;transition:all .25s;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(34,211,238,.4);}
+.msg{font-size:.85rem;margin-top:14px;min-height:20px;font-weight:600;}
+.msg.err{color:#FCA5A5;}
+.msg.ok{color:#86EFAC;}
+#painel{display:none;}
+.header-panel{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;flex-wrap:wrap;gap:14px;}
+.header-panel h2{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;margin:0;}
+.btn-ghost{padding:10px 20px;border-radius:999px;background:rgba(120,180,255,.1);border:1px solid var(--borda);color:var(--texto);font-size:.9rem;font-weight:600;}
+.btn-ghost:hover{background:rgba(120,180,255,.18);}
+.btn-green{padding:10px 20px;border-radius:999px;background:linear-gradient(135deg,var(--verde),#16A34A);color:#04240F;font-size:.9rem;font-weight:700;border:none;box-shadow:0 8px 20px rgba(34,197,94,.35);}
+.btn-green:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(34,197,94,.5);}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+.tab{padding:10px 18px;border-radius:999px;background:rgba(120,180,255,.06);border:1px solid var(--borda);color:var(--texto-2);font-size:.88rem;cursor:pointer;transition:all .25s;}
+.tab:hover{color:var(--texto);}
+.tab.active{background:linear-gradient(135deg,rgba(34,211,238,.2),rgba(30,94,255,.2));color:var(--ciano);border-color:rgba(34,211,238,.4);}
+.card{background:linear-gradient(165deg,#0E1E36,#061224);border:1px solid var(--borda);border-radius:16px;padding:24px;margin-bottom:20px;}
+.card h3{margin:0 0 16px;font-size:1.05rem;}
+.info-box{background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);border-radius:12px;padding:14px 18px;font-size:.85rem;color:var(--texto-2);margin-bottom:20px;line-height:1.7;}
+.info-box strong{color:var(--ciano);}
+.warn-box{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:12px;padding:14px 18px;font-size:.85rem;color:#FCD34D;margin-bottom:20px;line-height:1.7;}
+.upload-zone{border:2px dashed var(--borda);border-radius:14px;padding:26px 20px;text-align:center;cursor:pointer;transition:all .25s;background:rgba(0,0,0,.15);}
+.upload-zone:hover{border-color:var(--ciano);background:rgba(34,211,238,.05);}
+.upload-zone.dragover{border-color:var(--ciano);background:rgba(34,211,238,.1);}
+.upload-zone .ico{font-size:2rem;margin-bottom:6px;}
+.upload-zone p{margin:0;color:var(--texto-2);font-size:.88rem;}
+.upload-zone strong{color:var(--ciano);}
+.preview-box{background:rgba(6,18,36,.95);border:1px solid var(--borda);border-radius:14px;padding:18px 22px;margin-top:18px;}
+.preview-box .label{font-size:.72rem;color:var(--texto-2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;font-weight:700;}
+.preview-header{display:flex;align-items:center;gap:12px;min-height:70px;}
+.preview-circle{width:52px;height:52px;border-radius:50%;overflow:hidden;position:relative;flex-shrink:0;background:#0E1E36;}
+.preview-circle img{width:100%;height:100%;object-fit:cover;display:block;transform-origin:center center;will-change:transform;}
+.preview-text{line-height:1;font-family:'Space Grotesk',sans-serif;font-weight:700;}
+.preview-text strong{display:block;color:#F0F6FF;font-size:1.05rem;letter-spacing:-.02em;}
+.preview-text span{display:block;color:#22D3EE;font-size:.7rem;letter-spacing:.3em;font-weight:600;margin-top:2px;}
+.slider-row{margin:14px 0;}
+.slider-row label{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;margin-bottom:6px;}
+.slider-row label span{color:var(--ciano);font-weight:700;font-family:monospace;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:rgba(120,180,255,.15);border-radius:999px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--ciano),var(--roxo));cursor:pointer;box-shadow:0 4px 12px rgba(34,211,238,.5);}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--ciano),var(--roxo));cursor:pointer;}
+.row-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.btn-sm{padding:10px 18px;border-radius:999px;border:none;font-size:.85rem;font-weight:600;cursor:pointer;}
+.btn-save{background:linear-gradient(135deg,var(--ciano),var(--roxo));color:#061224;}
+.btn-save:hover{transform:translateY(-2px);}
+.btn-danger{background:transparent;border:1px solid var(--perigo);color:#FCA5A5;}
+.btn-danger:hover{background:rgba(239,68,68,.1);}
+.grid-port{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:16px;}
+.port-item{background:rgba(0,0,0,.2);border:1px solid var(--borda);border-radius:12px;padding:12px;}
+.port-thumb{aspect-ratio:16/10;background:linear-gradient(135deg,#16324F,#061224);border-radius:8px;overflow:hidden;margin-bottom:10px;display:grid;place-items:center;color:var(--texto-2);font-family:monospace;font-size:.8rem;}
+.port-thumb img{width:100%;height:100%;object-fit:cover;}
+.port-item h4{margin:0 0 8px;font-size:.9rem;}
+.port-item .btn-sm{padding:6px 12px;font-size:.75rem;}
+table{width:100%;border-collapse:collapse;font-size:.88rem;}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--borda);}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ciano);font-weight:700;}
+.empty{padding:30px;text-align:center;color:var(--texto-2);font-size:.9rem;}
+</style>
+</head>
+<body>
+
+<div id="loginBox">
+  <div class="logo-wrap">
+    <div class="logo-circle" id="loginCircle"><img src="logo.png" alt="Fluxx Code" id="loginLogoImg"></div>
+    <div class="logo-text">
+      <strong>FLUXX</strong>
+      <span>CODE</span>
+    </div>
+  </div>
+  <h1>Painel Administrativo</h1>
+  <p class="sub">Entre com usuário e senha</p>
+
+  <label for="userLogin">Usuário</label>
+  <input id="userLogin" type="text" autocomplete="username" autocapitalize="off" spellcheck="false">
+  <label for="pwd" style="margin-top:12px">Senha</label>
+  <input id="pwd" type="password" autocomplete="current-password">
+  <button class="btn-primary" id="btnEntrar" type="button">Entrar</button>
+  <div class="msg" id="msg"></div>
+</div>
+
+<div id="painel" class="container">
+  <div class="header-panel">
+    <h2>⚙️ Painel Administrativo</h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn-green" id="btnGerarJS">⬇ Gerar logo-data.js</button>
+      <button class="btn-ghost" id="btnSair">Sair</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" data-tab="logo">🖼 Logo</button>
+    <button class="tab" data-tab="portfolio">🚀 Portfólio</button>
+    <button class="tab" data-tab="leads">📥 Leads</button>
+    <button class="tab" data-tab="settings">🛠 Configurações</button>
+  </div>
+  <div id="conteudo"></div>
+</div>
+
+<script src="js/admin-senha.js"></script>
+<script>
+(function(){
+'use strict';
+
+const CHAVE_DADOS = 'fluxxcode.dados.v1';
+const SESSION_KEY = 'fluxxcode.session';
+
+function dadosIniciais(){
+  return {
+    logo: { src: null, size: 52, zoom: 1, posX: 50, posY: 50 },
+    portfolio: [
+      { id:'p1', name:'Doceria Bella', image: null, mockup:'// site institucional' },
+      { id:'p2', name:'Eletricista Marcos', image: null, mockup:'// landing page' },
+      { id:'p3', name:'Studio Camila', image: null, mockup:'// agendamento' },
+      { id:'p4', name:'Pet Shop Amigo Fiel', image: null, mockup:'// e-commerce' }
+    ],
+    leads: []
+  };
+}
+function carregarDados(){
+  try{
+    const raw = localStorage.getItem(CHAVE_DADOS);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      const base = dadosIniciais();
+      return Object.assign(base, parsed, { logo: Object.assign(base.logo, parsed.logo || {}) });
+    }
+  }catch(e){}
+  return dadosIniciais();
+}
+function salvarDados(d){
+  try{ localStorage.setItem(CHAVE_DADOS, JSON.stringify(d)); return true; }
+  catch(e){ alert('❌ Espaço cheio! Use imagens menores.'); return false; }
+}
+function safeAtob(b64){ try{ return decodeURIComponent(escape(atob(b64))); }catch(e){ return ''; } }
+function findUser(username, password){
+  const users = (window.FLUXX_ADMIN || {}).users || [];
+  const u = users.find(x => x.username.toLowerCase() === String(username||'').trim().toLowerCase());
+  if(!u) return null;
+  if(safeAtob(u.passwordB64) !== password) return null;
+  return u;
+}
+
+let dados = carregarDados();
+
+function comprimirImagem(file, maxLado, qualidade){
+  return new Promise(function(resolve, reject){
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      const img = new Image();
+      img.onload = function(){
+        let w = img.width, h = img.height;
+        if(w > maxLado || h > maxLado){
+          if(w > h){ h = Math.round(h * maxLado / w); w = maxLado; }
+          else { w = Math.round(w * maxLado / h); h = maxLado; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const tipo = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+        resolve(canvas.toDataURL(tipo, qualidade));
+      };
+      img.onerror = function(){ reject(new Error('Imagem inválida')); };
+      img.src = ev.target.result;
+    };
+    reader.onerror = function(){ reject(new Error('Falha ao ler arquivo')); };
+    reader.readAsDataURL(file);
+  });
+}
+
+const elLogin = document.getElementById('loginBox');
+const elPainel = document.getElementById('painel');
+const elUser = document.getElementById('userLogin');
+const elPwd = document.getElementById('pwd');
+const elMsg = document.getElementById('msg');
+const elBtnEntrar = document.getElementById('btnEntrar');
+const elConteudo = document.getElementById('conteudo');
+const elLogoLoginImg = document.getElementById('loginLogoImg');
+let abaAtual = 'logo';
+
+function aplicarLogoLogin(){
+  if(dados.logo && dados.logo.src){ elLogoLoginImg.src = dados.logo.src; }
+  elLogoLoginImg.style.transform = 'scale(' + (dados.logo.zoom||1) + ') translate(' + ((dados.logo.posX||50)-50) + '%, ' + ((dados.logo.posY||50)-50) + '%)';
+}
+aplicarLogoLogin();
+
+function tentarLogin(){
+  const username = (elUser.value || '').trim();
+  const password = elPwd.value;
+  if(!username || !password){ elMsg.className='msg err'; elMsg.textContent='Preencha usuário e senha.'; return; }
+  const user = findUser(username, password);
+  if(user){
+    sessionStorage.setItem(SESSION_KEY, user.username);
+    elMsg.className = 'msg ok';
+    elMsg.textContent = '✅ Bem-vindo, ' + user.username + '!';
+    setTimeout(mostrarPainel, 300);
+  } else {
+    elMsg.className = 'msg err';
+    elMsg.textContent = '❌ Usuário ou senha incorretos.';
+    elPwd.value = ''; elPwd.focus();
+  }
+}
+elBtnEntrar.addEventListener('click', tentarLogin);
+elPwd.addEventListener('keydown', function(e){ if(e.key === 'Enter') tentarLogin(); });
+elUser.addEventListener('keydown', function(e){ if(e.key === 'Enter') elPwd.focus(); });
+
+function mostrarPainel(){
+  elLogin.style.display = 'none';
+  elPainel.style.display = 'block';
+  render();
+}
+document.getElementById('btnSair').addEventListener('click', function(){
+  sessionStorage.removeItem(SESSION_KEY); location.reload();
+});
+
+document.querySelectorAll('.tab').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    abaAtual = btn.dataset.tab;
+    render();
+  });
+});
+
+function render(){
+  if(abaAtual === 'logo') elConteudo.innerHTML = renderLogo();
+  else if(abaAtual === 'portfolio') elConteudo.innerHTML = renderPortfolio();
+  else if(abaAtual === 'leads') elConteudo.innerHTML = renderLeads();
+  else if(abaAtual === 'settings') elConteudo.innerHTML = renderSettings();
+  bindEventos();
+  if(abaAtual === 'logo') aplicarPreviewLogo();
+}
+
+function renderLogo(){
+  const L = dados.logo;
+  const srcAtual = L.src || 'logo.png';
+  return '<div class="warn-box">⚠️ Depois de ajustar, clique em <b>"⬇ Gerar logo-data.js"</b> no topo, salve na pasta do projeto e dê Ctrl+F5 no index.html.</div>'+
+  '<div class="info-box"><strong>💡 Como funciona:</strong> envie a imagem da logo. Ajuste tamanho, zoom e posição. O preview atualiza em tempo real.</div>'+
+  '<div class="card"><h3>🖼 Logo do site</h3>'+
+    '<div class="upload-zone" id="zoneLogo"><div class="ico">📤</div><p><strong>Clique</strong> ou arraste a imagem aqui</p><p style="font-size:.8rem;margin-top:6px">PNG, JPG ou SVG • máx 5 MB</p><input type="file" id="fileLogo" accept="image/*" hidden></div>'+
+    '<div class="preview-box"><div class="label">👁️ Prévia no site</div><div class="preview-header"><div class="preview-circle" id="previewCircle"><img id="previewImg" src="'+srcAtual+'" alt="Logo"></div><div class="preview-text"><strong>FLUXX</strong><span>CODE</span></div></div></div>'+
+    '<h4 style="margin:24px 0 4px;font-size:.95rem;color:var(--ciano)">🎯 Ajustes</h4>'+
+    '<div class="slider-row"><label>Tamanho <span id="vSize">'+L.size+'px</span></label><input type="range" id="slSize" min="30" max="120" step="1" value="'+L.size+'"></div>'+
+    '<div class="slider-row"><label>Zoom <span id="vZoom">'+L.zoom.toFixed(2)+'x</span></label><input type="range" id="slZoom" min="0.5" max="2.5" step="0.05" value="'+L.zoom+'"></div>'+
+    '<div class="slider-row"><label>Posição horizontal <span id="vPosX">'+L.posX+'%</span></label><input type="range" id="slPosX" min="0" max="100" step="1" value="'+L.posX+'"></div>'+
+    '<div class="slider-row"><label>Posição vertical <span id="vPosY">'+L.posY+'%</span></label><input type="range" id="slPosY" min="0" max="100" step="1" value="'+L.posY+'"></div>'+
+    '<div class="row-btns"><button class="btn-sm btn-save" id="btnSalvarLogo">💾 Salvar ajustes</button><button class="btn-sm btn-save" id="btnResetLogo" style="background:rgba(120,180,255,.1);color:var(--texto);border:1px solid var(--borda)">↺ Resetar</button>'+
+    (L.src ? '<button class="btn-sm btn-danger" id="btnRemoverLogo">🗑 Remover logo personalizada</button>' : '')+'</div></div>';
+}
+
+function aplicarPreviewLogo(){
+  const slSize = document.getElementById('slSize');
+  const slZoom = document.getElementById('slZoom');
+  const slPosX = document.getElementById('slPosX');
+  const slPosY = document.getElementById('slPosY');
+  if(!slSize) return;
+  const previewCircle = document.getElementById('previewCircle');
+  const previewImg = document.getElementById('previewImg');
+  function update(){
+    const size = parseFloat(slSize.value), zoom = parseFloat(slZoom.value);
+    const px = parseFloat(slPosX.value), py = parseFloat(slPosY.value);
+    previewCircle.style.width = size + 'px'; previewCircle.style.height = size + 'px';
+    previewImg.style.transform = 'scale(' + zoom + ') translate(' + (px - 50) + '%, ' + (py - 50) + '%)';
+    document.getElementById('vSize').textContent = size + 'px';
+    document.getElementById('vZoom').textContent = zoom.toFixed(2) + 'x';
+    document.getElementById('vPosX').textContent = px + '%';
+    document.getElementById('vPosY').textContent = py + '%';
+  }
+  slSize.addEventListener('input', update); slZoom.addEventListener('input', update);
+  slPosX.addEventListener('input', update); slPosY.addEventListener('input', update);
+  update();
+}
+
+function renderPortfolio(){
+  return '<div class="card"><h3>Projetos do portfólio</h3><div class="grid-port">'+
+    dados.portfolio.map(function(p){
+      return '<div class="port-item" data-port="'+p.id+'"><div class="port-thumb">'+(p.image ? '<img src="'+p.image+'" alt="">' : esc(p.mockup || '// projeto'))+'</div><h4>'+esc(p.name)+'</h4><div class="row-btns"><label class="btn-sm btn-save" style="cursor:pointer;text-align:center">📷 Trocar<input type="file" accept="image/*" hidden data-file-port="'+p.id+'"></label>'+(p.image ? '<button class="btn-sm btn-danger" data-remove-port="'+p.id+'">🗑</button>' : '')+'</div></div>';
+    }).join('')+'</div></div>';
+}
+
+function renderLeads(){
+  if(!dados.leads.length) return '<div class="card"><h3>Leads recebidos</h3><div class="empty">Nenhum lead ainda.</div></div>';
+  return '<div class="card"><h3>Leads ('+dados.leads.length+')</h3><table><thead><tr><th>Data</th><th>Nome</th><th>Contato</th><th>Mensagem</th></tr></thead><tbody>'+
+    dados.leads.map(function(l){ return '<tr><td>'+new Date(l.date).toLocaleString('pt-BR')+'</td><td>'+esc(l.name)+'</td><td>'+esc(l.email)+(l.phone?'<br><small>'+esc(l.phone)+'</small>':'')+'</td><td style="max-width:320px;font-size:.84rem">'+esc(l.message)+'</td></tr>'; }).join('')+
+    '</tbody></table></div>';
+}
+
+function renderSettings(){
+  const user = sessionStorage.getItem(SESSION_KEY) || '—';
+  return '<div class="card"><h3>Sessão</h3><p style="color:var(--texto-2);font-size:.88rem;margin:0">Logado como <strong style="color:var(--texto)">'+esc(user)+'</strong></p></div>'+
+  '<div class="card"><h3>Backup</h3><div class="row-btns"><button class="btn-sm btn-save" id="btnExportar">⬇ Baixar backup</button><label class="btn-sm btn-save" style="cursor:pointer;display:inline-flex;align-items:center">⬆ Restaurar<input type="file" id="fileImportar" accept="application/json" hidden></label></div></div>'+
+  '<div class="card" style="border-color:rgba(239,68,68,.3)"><h3 style="color:#FCA5A5">Zona de perigo</h3><div class="row-btns"><button class="btn-sm btn-danger" id="btnResetar">🔄 Apagar tudo</button></div></div>';
+}
+
+function bindEventos(){
+  const btnGerar = document.getElementById('btnGerarJS');
+  if(btnGerar) btnGerar.addEventListener('click', gerarLogoDataJs);
+  setupUpload('zoneLogo','fileLogo', processarLogo);
+
+  const btnSalvar = document.getElementById('btnSalvarLogo');
+  if(btnSalvar) btnSalvar.addEventListener('click', function(){
+    dados.logo.size = parseFloat(document.getElementById('slSize').value);
+    dados.logo.zoom = parseFloat(document.getElementById('slZoom').value);
+    dados.logo.posX = parseFloat(document.getElementById('slPosX').value);
+    dados.logo.posY = parseFloat(document.getElementById('slPosY').value);
+    if(salvarDados(dados)) alert('✅ Ajustes salvos!\n\nAgora clique em "⬇ Gerar logo-data.js".');
+  });
+
+  const btnReset = document.getElementById('btnResetLogo');
+  if(btnReset) btnReset.addEventListener('click', function(){
+    dados.logo.size = 52; dados.logo.zoom = 1; dados.logo.posX = 50; dados.logo.posY = 50;
+    salvarDados(dados); render();
+  });
+
+  const btnRem = document.getElementById('btnRemoverLogo');
+  if(btnRem) btnRem.addEventListener('click', function(){
+    if(!confirm('Remover a logo personalizada?')) return;
+    dados.logo.src = null; salvarDados(dados); render();
+  });
+
+  document.querySelectorAll('[data-file-port]').forEach(function(inp){
+    inp.addEventListener('change', function(e){
+      if(e.target.files.length) processarPortfolio(inp.dataset.filePort, e.target.files[0]);
+    });
+  });
+  document.querySelectorAll('[data-remove-port]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const item = dados.portfolio.find(function(p){ return p.id === btn.dataset.removePort; });
+      if(!item) return;
+      if(!confirm('Remover imagem?')) return;
+      item.image = null; salvarDados(dados); render();
+    });
+  });
+
+  const be = document.getElementById('btnExportar');
+  if(be) be.addEventListener('click', function(){
+    const blob = new Blob([JSON.stringify(dados, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'fluxxcode-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click(); URL.revokeObjectURL(url);
+  });
+
+  const fi = document.getElementById('fileImportar');
+  if(fi) fi.addEventListener('change', function(e){
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      try{
+        const parsed = JSON.parse(ev.target.result);
+        const base = dadosIniciais();
+        dados = Object.assign(base, parsed, { logo: Object.assign(base.logo, parsed.logo || {}) });
+        salvarDados(dados); alert('✅ Backup restaurado!'); render();
+      }catch(err){ alert('❌ Arquivo inválido.'); }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  const br = document.getElementById('btnResetar');
+  if(br) br.addEventListener('click', function(){
+    if(!confirm('⚠️ Apagar TUDO?')) return;
+    localStorage.removeItem(CHAVE_DADOS); location.reload();
+  });
+}
+
+function gerarLogoDataJs(){
+  const L = dados.logo;
+  const payload = { logo: { size: L.size, zoom: L.zoom, posX: L.posX, posY: L.posY } };
+  const conteudo = '/* Fluxx Code — config da logo — ' + new Date().toLocaleString('pt-BR') + ' */\n' +
+    'window.FLUXX_DATA = ' + JSON.stringify(payload) + ';\n';
+  const blob = new Blob([conteudo], {type:'application/javascript'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'logo-data.js'; a.click(); URL.revokeObjectURL(url);
+  alert('✅ Arquivo "logo-data.js" baixado!\n\nColoque na pasta do projeto e dê Ctrl+F5 no index.html.');
+}
+
+function setupUpload(zoneId, inputId, callback){
+  const zone = document.getElementById(zoneId);
+  const input = document.getElementById(inputId);
+  if(!zone || !input) return;
+  zone.addEventListener('click', function(){ input.click(); });
+  zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', function(){ zone.classList.remove('dragover'); });
+  zone.addEventListener('drop', function(e){
+    e.preventDefault(); zone.classList.remove('dragover');
+    if(e.dataTransfer.files.length) callback(e.dataTransfer.files[0]);
+  });
+  input.addEventListener('change', function(e){
+    if(e.target.files.length) callback(e.target.files[0]);
+  });
+}
+
+async function processarLogo(file){
+  if(file.size > 5*1024*1024){ alert('Máx 5 MB.'); return; }
+  try{
+    dados.logo.src = await comprimirImagem(file, 512, 0.92);
+    if(salvarDados(dados)){ alert('✅ Logo enviada! Ajuste os sliders e clique em "Gerar logo-data.js".'); render(); }
+  }catch(err){ alert('❌ ' + err.message); }
+}
+
+async function processarPortfolio(id, file){
+  if(file.size > 5*1024*1024){ alert('Máx 5 MB.'); return; }
+  try{
+    const base64 = await comprimirImagem(file, 900, 0.85);
+    const item = dados.portfolio.find(function(p){ return p.id === id; });
+    if(!item) return;
+    item.image = base64;
+    if(salvarDados(dados)){ alert('✅ Imagem atualizada!'); render(); }
+  }catch(err){ alert('❌ ' + err.message); }
+}
+
+function esc(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+window.addEventListener('load', function(){ elUser.focus(); });
+})();
+</script>
+</body>
+</html>

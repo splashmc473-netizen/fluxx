@@ -1,0 +1,17 @@
+{
+  "name": "Fluxx Code — Sites para microempresas",
+  "short_name": "Fluxx Code",
+  "description": "Sites profissionais, sistemas e automações para microempresas.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#061224",
+  "theme_color": "#061224",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

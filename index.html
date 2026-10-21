@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fluxx Code — Sites profissionais para microempresas</title>
+<link rel="canonical" href="/">
+<meta property="og:title" content="Fluxx Code — Sites profissionais para microempresas">
+<meta property="og:type" content="website">
+<meta name="description" content="Criamos o site que sua microempresa precisa para vender mais e passar credibilidade.">
+<meta name="theme-color" content="#061224">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fluxx Code">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=8.0.6">
+<link rel="stylesheet" href="css/extra.css?v=8.0.6">
+
+<style>
+/* ============ WHATSAPP FLUTUANTE ============ */
+.wa-float {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  background: #25D366;
+  color: #fff;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, .4), 0 0 0 0 rgba(37, 211, 102, .7);
+  z-index: 9998;
+  transition: all .25s cubic-bezier(.4, 0, .2, 1);
+  animation: wa-pulse 2.2s infinite;
+}
+.wa-float:hover {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 12px 32px rgba(37, 211, 102, .55);
+  animation: none;
+}
+.wa-float svg {
+  width: 30px;
+  height: 30px;
+  fill: #fff;
+}
+@keyframes wa-pulse {
+  0%   { box-shadow: 0 8px 24px rgba(37, 211, 102, .4), 0 0 0 0 rgba(37, 211, 102, .7); }
+  70%  { box-shadow: 0 8px 24px rgba(37, 211, 102, .4), 0 0 0 18px rgba(37, 211, 102, 0); }
+  100% { box-shadow: 0 8px 24px rgba(37, 211, 102, .4), 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+/* ============ PREVIEW EM MODAL ============ */
+dialog.pv {
+  width: min(1200px, 96vw);
+  height: 92vh;
+  max-height: 92vh;
+  padding: 0;
+  border: 1px solid rgba(120,180,255,.15);
+  border-radius: 18px;
+  background: #061224;
+  color: #F0F6FF;
+  overflow: hidden;
+}
+dialog.pv[open] { display: flex; flex-direction: column; }
+dialog.pv::backdrop { background: rgba(2, 8, 18, .85); backdrop-filter: blur(4px); }
+
+.pv-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(120,180,255,.15);
+  background: #0E1E36;
+}
+.pv-bar h2 {
+  font-size: 1rem;
+  margin: 0;
+  margin-right: auto;
+  color: #F0F6FF;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.pv-stage {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16px;
+  background: rgba(0,0,0,.25);
+  position: relative;
+}
+.pv-loading {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  color: #8FA8C7;
+  font-size: .9rem;
+  pointer-events: none;
+  z-index: 1;
+}
+.pv-frame {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  min-height: 520px;
+  background: #fff;
+  border: 0;
+  border-radius: 10px;
+  transition: width .3s, height .3s;
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+}
+.pv-frame.tablet { width: 768px; max-width: 100%; }
+.pv-frame.mobile { width: 390px; max-width: 100%; }
+.pv-warn {
+  background: rgba(251,191,36,.08);
+  border: 1px solid rgba(251,191,36,.3);
+  color: #FCD34D;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin: 0 auto 12px;
+  font-size: .85rem;
+  text-align: center;
+  max-width: 600px;
+}
+
+@media (max-width: 640px) {
+  .wa-float {
+    width: 54px;
+    height: 54px;
+    bottom: 20px;
+    right: 20px;
+  }
+  .wa-float svg { width: 26px; height: 26px; }
+  .toast-wrap { bottom: 90px !important; }
+  dialog.pv { width: 100vw; height: 100vh; max-height: 100vh; border-radius: 0; }
+  .pv-frame { min-height: 300px; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container header-inner">
+    <a href="#" class="logo" aria-label="Fluxx Code — início">
+      <span class="logo-mark" data-logo-circle style="width:52px;height:52px;">
+        <img src="logo.png" alt="Fluxx Code">
+      </span>
+      <span class="logo-text">
+        <strong>FLUXX</strong>
+        <span>CODE</span>
+      </span>
+    </a>
+
+    <nav class="nav" id="nav">
+      <a href="#servicos">Serviços</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#portfolio">Portfólio</a>
+      <a href="demos.html">Demonstrações</a>
+      <a href="#processo">Processo</a>
+      <a href="#avaliacoes">Avaliações</a>
+      <a href="#contato">Contato</a>
+    </nav>
+
+    <div class="header-cta">
+      <a href="#contato" class="btn btn-primary">Fale com a gente</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="badge"><span class="dot"></span> <span data-bind="heroBadge">Vagas abertas para novos projetos</span></span>
+      <h1 data-html="heroTitle">Sites profissionais<br>para <span class="grad">microempresas.</span></h1>
+      <p class="lead" data-bind="heroLead">Criamos o site que sua microempresa precisa para vender mais e passar credibilidade — do zero ao online em poucos dias.</p>
+      <div class="hero-cta">
+        <a href="#contato" class="btn btn-primary btn-lg">Solicitar orçamento</a>
+        <a href="#portfolio" class="btn btn-ghost btn-lg">Ver projetos</a>
+        <a href="demos.html" class="btn btn-ghost btn-lg">Ver demonstrações</a>
+      </div>
+      <div class="hero-stats" id="heroStats"></div>
+    </div>
+
+    <div class="code-window" aria-hidden="true">
+      <div class="code-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="title">fluxx-code.js</span>
+      </div>
+      <div class="code-body">
+<span class="ln"><span class="cm">// seu negócio, nosso código</span></span>
+<span class="ln"><span class="kw">const</span> <span class="var">site</span> = <span class="kw">await</span> <span class="fn">fluxx</span>.<span class="fn">criar</span>({</span>
+<span class="ln">  cliente: <span class="str">"sua microempresa"</span>,</span>
+<span class="ln">  tipo: <span class="str">"site-profissional"</span>,</span>
+<span class="ln">  prazo: <span class="num">7</span>, <span class="cm">// dias</span></span>
+<span class="ln">  resultado: <span class="str">"mais clientes"</span></span>
+<span class="ln">});</span>
+<span class="ln"></span>
+<span class="ln"><span class="kw">return</span> <span class="var">site</span>.<span class="fn">deploy</span>(); <span class="cursor"></span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SOBRE ============ -->
+<section class="section" id="sobre">
+  <div class="container">
+    <div class="grid-2" style="align-items:center;gap:60px">
+
+      <div>
+        <span class="eyebrow">Sobre a Fluxx Code</span>
+        <h2>Sites feitos sob medida, não templates prontos.</h2>
+
+        <p style="color:var(--texto-2);margin-bottom:16px">
+          A Fluxx Code nasceu da vontade de fazer diferente no mercado de criação de sites. Em vez de vender template genérico, a gente senta, conversa e entende o que o seu negócio realmente precisa.
+        </p>
+
+        <p style="color:var(--texto-2);margin-bottom:24px">
+          Somos um time enxuto — apaixonados por código e design. Cada projeto que entra é tratado como se fosse o primeiro: com atenção total, prazo respeitado e comunicação direta, sem intermediários.
+        </p>
+
+        <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:28px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="font-size:1.2rem;flex-shrink:0">💬</span>
+            <div>
+              <strong style="display:block;color:var(--texto);font-size:.95rem">Você fala direto com quem faz</strong>
+              <span style="color:var(--texto-2);font-size:.88rem">Sem intermediário, sem telefone que não atende.</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="font-size:1.2rem;flex-shrink:0">⚡</span>
+            <div>
+              <strong style="display:block;color:var(--texto);font-size:.95rem">Prazos curtos, escopo fechado</strong>
+              <span style="color:var(--texto-2);font-size:.88rem">Combinamos o que será entregue e quando. Sem surpresas.</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="font-size:1.2rem;flex-shrink:0">🎯</span>
+            <div>
+              <strong style="display:block;color:var(--texto);font-size:.95rem">Cada projeto é nossa vitrine</strong>
+              <span style="color:var(--texto-2);font-size:.88rem">Estamos construindo portfólio, então os primeiros clientes entram com condições diferenciadas.</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style="font-size:1.2rem;flex-shrink:0">💰</span>
+            <div>
+              <strong style="display:block;color:var(--texto);font-size:.95rem">Preço justo de entrada</strong>
+              <span style="color:var(--texto-2);font-size:.88rem">Sem inflar valor pra "parecer grande". Cobramos o que o trabalho vale.</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="#contato" class="btn btn-primary">Quero conversar sobre meu projeto</a>
+      </div>
+
+      <div class="code-window" aria-hidden="true" style="max-width:100%">
+        <div class="code-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="title">quem-somos.md</span>
+        </div>
+        <div class="code-body">
+<span class="ln"><span class="cm"># Nossa forma de trabalhar</span></span>
+<span class="ln"></span>
+<span class="ln"><span class="kw">-</span> <span class="var">Atendimento</span>: direto com quem desenvolve</span>
+<span class="ln"><span class="kw">-</span> <span class="var">Prazo</span>: definido em contrato, respeitado</span>
+<span class="ln"><span class="kw">-</span> <span class="var">Preço</span>: justo, sem enrolação</span>
+<span class="ln"><span class="kw">-</span> <span class="var">Suporte</span>: 30 dias grátis após entrega</span>
+<span class="ln"></span>
+<span class="ln"><span class="cm">// quem contrata tem:</span></span>
+<span class="ln">✔ <span class="str">site 100% personalizado</span></span>
+<span class="ln">✔ <span class="str">você aprova cada etapa</span></span>
+<span class="ln">✔ <span class="str">código limpo e rápido</span></span>
+<span class="ln">✔ <span class="str">caminho aberto pra crescer</span></span>
+<span class="ln"></span>
+<span class="ln"><span class="kw">feito</span> = <span class="str">"sob medida"</span>; <span class="cursor"></span></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="section" id="servicos">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">O que fazemos</span>
+      <h2>Soluções sob medida</h2>
+      <p>Cada negócio é único. Por isso entregamos projetos personalizados — nunca templates genéricos.</p>
+    </div>
+    <div class="grid-3" id="servicesGrid"></div>
+  </div>
+</section>
+
+<section class="section" id="portfolio">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Portfólio</span>
+      <h2>Demonstrações em destaque</h2>
+      <p>Um recorte dos modelos que criamos. Veja a galeria completa em <a href="demos.html" style="color:var(--ciano)">Demonstrações</a>.</p>
+    </div>
+    <div class="grid-2" id="portfolioGrid"></div>
+  </div>
+</section>
+
+<section class="section" id="processo">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Como trabalhamos</span>
+      <h2>Processo simples e transparente</h2>
+      <p>Você acompanha cada etapa. Sem surpresas, sem enrolação.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><h4>Conversa inicial</h4><p>Entendemos seu negócio, seus objetivos e o que você precisa.</p></div>
+      <div class="step"><div class="step-num">2</div><h4>Proposta e escopo</h4><p>Enviamos prazo, valor e o que será entregue. Tudo por escrito.</p></div>
+      <div class="step"><div class="step-num">3</div><h4>Desenvolvimento</h4><p>Você acompanha o progresso com entregas parciais a cada etapa.</p></div>
+      <div class="step"><div class="step-num">4</div><h4>Entrega + suporte</h4><p>Publicamos o site e oferecemos suporte por 30 dias gratuitos.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Stack</span>
+      <h2>Tecnologias que dominamos</h2>
+      <p>Usamos o que há de mais moderno e confiável no mercado.</p>
+    </div>
+    <div class="techs" id="techsGrid"></div>
+  </div>
+</section>
+
+<section class="section" id="avaliacoes">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Avaliações</span>
+      <h2>Avaliações dos clientes</h2>
+      <p>Só publicamos avaliações feitas com conta Google, depois de revisadas.</p>
+    </div>
+    <div class="rv-summary" id="reviewSummary" hidden></div>
+    <div class="toolbar rv-tools">
+      <select class="input" id="rvFilter" aria-label="Filtrar por nota"><option value="0">Todas as notas</option><option value="5">5 estrelas</option><option value="4">4 estrelas</option><option value="3">3 estrelas</option><option value="2">2 estrelas</option><option value="1">1 estrela</option></select>
+      <select class="input" id="rvOrder" aria-label="Ordenar"><option value="desc">Mais recentes</option><option value="asc">Mais antigas</option></select>
+    </div>
+    <div class="grid-3" id="reviewList"></div>
+    <div class="rv-box" id="reviewAuth"></div>
+    <div id="testimonialsGrid" hidden></div>
+  </div>
+</section>
+
+<section class="section" id="contato">
+  <div class="container">
+    <div class="cta-box">
+      <h2>Tem um projeto em mente?</h2>
+      <p>Preencha o formulário abaixo e respondemos em até 24h com uma proposta clara e sem compromisso.</p>
+
+      <form id="contactForm" class="contact-form" novalidate>
+        <div class="form-row">
+          <div class="field">
+            <label for="cfName">Seu nome *</label>
+            <input class="input" id="cfName" name="name" required>
+            <span class="error-msg" id="errName">Informe seu nome</span>
+          </div>
+          <div class="field">
+            <label for="cfEmail">E-mail *</label>
+            <input class="input" id="cfEmail" name="email" type="email" required>
+            <span class="error-msg" id="errEmail">Informe um e-mail válido</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="cfPhone">WhatsApp</label>
+            <input class="input" id="cfPhone" name="phone" type="tel" inputmode="numeric" placeholder="(64) 99263-7680" maxlength="15" autocomplete="tel">
+            <span class="error-msg" id="errPhone">Informe um telefone válido com DDD</span>
+          </div>
+          <div class="field">
+            <label for="cfService">Serviço de interesse</label>
+            <select class="input" id="cfService" name="service">
+              <option value="">Selecione…</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="cfMessage">Conte sobre seu projeto *</label>
+          <textarea class="input" id="cfMessage" name="message" rows="4" required></textarea>
+          <span class="error-msg" id="errMessage">Escreva uma mensagem</span>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary btn-lg">Enviar mensagem</button>
+          <a href="#" id="waDirectLink" target="_blank" rel="noopener" class="btn btn-ghost btn-lg">💬 Chamar no WhatsApp</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="#" class="logo" style="margin-bottom:16px">
+          <span class="logo-mark" data-logo-circle style="width:60px;height:60px;">
+            <img src="logo.png" alt="Fluxx Code">
+          </span>
+          <span class="logo-text">
+            <strong>FLUXX</strong>
+            <span>CODE</span>
+          </span>
+        </a>
+        <p>Sites para microempresas</p>
+        <div class="socials" id="socialsGrid"></div>
+      </div>
+      <div>
+        <h4>Serviços</h4>
+        <ul id="footerServices"></ul>
+      </div>
+      <div>
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#portfolio">Portfólio</a></li>
+          <li><a href="demos.html">Demonstrações</a></li>
+          <li><a href="#avaliacoes">Avaliações</a></li>
+          <li><a href="#processo">Processo</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contato</h4>
+        <ul>
+          <li>✉️ <a id="footerEmail" href="#">—</a></li>
+          <li>💬 <a id="footerPhone" href="#">—</a></li>
+          <li>📍 <span id="footerAddress">—</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Fluxx Code. Todos os direitos reservados.</span>
+      <a href="admin/index.html" class="admin-link">Painel administrativo →</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ PREVIEW EM MODAL ============ -->
+<dialog class="pv" id="previewDialog" aria-labelledby="previewTitle">
+  <div class="pv-bar">
+    <h2 id="previewTitle">Demonstração</h2>
+    <div class="chips" style="margin:0;gap:6px" id="previewDevices" role="group" aria-label="Tamanho da tela">
+      <button class="chip" data-dev="" aria-pressed="true" type="button">🖥️ Computador</button>
+      <button class="chip" data-dev="tablet" aria-pressed="false" type="button">📱 Tablet</button>
+      <button class="chip" data-dev="mobile" aria-pressed="false" type="button">📲 Celular</button>
+    </div>
+    <a class="btn btn-ghost btn-sm" id="previewOpen" target="_blank" rel="noopener">↗ Abrir em nova aba</a>
+    <button class="btn btn-ghost btn-sm" data-preview-close type="button" aria-label="Fechar">✕</button>
+  </div>
+  <div class="pv-stage" id="previewStage"></div>
+</dialog>
+
+<!-- ============ WHATSAPP FLUTUANTE ============ -->
+<a href="https://wa.me/5564992637680?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20Fluxx%20Code%20e%20quero%20falar%20sobre%20um%20projeto."
+   class="wa-float"
+   target="_blank"
+   rel="noopener"
+   aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+
+<!-- ============================================================
+     MÁSCARA DE TELEFONE — (XX) XXXXX-XXXX
+     ============================================================ -->
+<script>
+(function(){
+  const input = document.getElementById('cfPhone');
+  if(!input) return;
+
+  function formatar(valor){
+    let v = valor.replace(/\D/g, '');
+    if(v.length > 11) v = v.slice(0, 11);
+
+    if(v.length === 0) return '';
+    if(v.length <= 2) return '(' + v;
+    if(v.length <= 6) return '(' + v.slice(0,2) + ') ' + v.slice(2);
+    if(v.length <= 10) return '(' + v.slice(0,2) + ') ' + v.slice(2,6) + '-' + v.slice(6);
+    return '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+  }
+
+  input.addEventListener('keydown', function(e){
+    const permitidas = ['Backspace','Delete','Tab','Escape','Enter','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'];
+    if(permitidas.indexOf(e.key) !== -1) return;
+    if(e.ctrlKey || e.metaKey) return;
+    if(!/^\d$/.test(e.key)) e.preventDefault();
+  });
+
+  input.addEventListener('input', function(e){
+    const posAntes = e.target.selectionStart;
+    const antes = e.target.value;
+    e.target.value = formatar(e.target.value);
+    const diff = e.target.value.length - antes.length;
+    try{ e.target.setSelectionRange(posAntes + diff, posAntes + diff); }catch(err){}
+  });
+
+  input.addEventListener('paste', function(e){
+    e.preventDefault();
+    const texto = (e.clipboardData || window.clipboardData).getData('text');
+    input.value = formatar(texto);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+
+  input.addEventListener('input', function(){
+    input.classList.remove('invalid');
+    const err = document.getElementById('errPhone');
+    if(err) err.classList.remove('show');
+  });
+})();
+</script>
+
+<!-- ============================================================
+     VALIDAÇÃO EXTRA — telefone mínimo 10 dígitos
+     ============================================================ -->
+<script>
+(function(){
+  window.addEventListener('load', function(){
+    const form = document.getElementById('contactForm');
+    if(!form) return;
+
+    form.addEventListener('submit', function(e){
+      const phoneInput = document.getElementById('cfPhone');
+      const errPhone = document.getElementById('errPhone');
+      if(!phoneInput) return;
+
+      const digitos = phoneInput.value.replace(/\D/g, '');
+      if(phoneInput.value.trim() !== '' && digitos.length < 10){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        phoneInput.classList.add('invalid');
+        if(errPhone) errPhone.classList.add('show');
+        phoneInput.focus();
+        return false;
+      }
+    }, true);
+  });
+})();
+</script>
+
+<!-- ============================================================
+     Aplica ajustes da logo (zoom, posição, tamanho)
+     ============================================================ -->
+<script>
+(function(){
+  function aplicarAjustes(){
+    var dados = window.FLUXX_DATA;
+    if(!dados || !dados.logo) return;
+
+    var L = dados.logo;
+    var zoom = L.zoom || 1;
+    var posX = (L.posX || 50) - 50;
+    var posY = (L.posY || 50) - 50;
+    var size = L.size || 52;
+
+    document.querySelectorAll('[data-logo-circle]').forEach(function(circle){
+      var img = circle.querySelector('img');
+      if(!img) return;
+
+      img.style.transform = 'scale(' + zoom + ') translate(' + posX + '%, ' + posY + '%)';
+      img.style.transformOrigin = 'center center';
+      img.style.transition = 'transform .2s';
+
+      var isFooter = circle.closest('.footer') !== null;
+      var base = isFooter ? 60 : 52;
+      var scale = size / 52;
+      circle.style.width = Math.round(base * scale) + 'px';
+      circle.style.height = Math.round(base * scale) + 'px';
+    });
+  }
+
+  var s = document.createElement('script');
+  s.src = 'logo-data.js?v=' + Date.now();
+  s.async = true;
+  s.onload = aplicarAjustes;
+  s.onerror = function(){
+    console.log('[Fluxx] logo-data.js não encontrado — usando padrão');
+  };
+  document.body.appendChild(s);
+})();
+</script>
+
+<!-- ============================================================
+     Scripts do site (ordem importa!)
+     ============================================================ -->
+<script src="js/api.js?v=8.0.6"></script>
+<script src="js/store.js?v=8.0.6"></script>
+<script src="js/public.js?v=8.0.6" defer></script>
+<script src="js/data.js?v=8.0.6"></script>
+<script src="js/app.js?v=8.0.6" defer></script>
+
+</body>
+</html>

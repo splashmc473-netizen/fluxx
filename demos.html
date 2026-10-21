@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demonstrações de sites — Fluxx Code</title>
+<meta name="description" content="Veja modelos de sites criados pela Fluxx Code para restaurantes, barbearias, clínicas, lojas e outros segmentos.">
+<meta name="theme-color" content="#061224">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="css/style.css?v=8.0.6">
+<link rel="stylesheet" href="css/extra.css?v=8.0.6">
+<style>
+  /* CSS local do preview — garante que funcione mesmo sem extra.css atualizado */
+  .pv-stage{position:relative;flex:1;overflow:auto;display:flex;justify-content:center;align-items:flex-start;padding:16px;background:rgba(0,0,0,.25)}
+  .pv-loading{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#8FA8C7;font-size:.9rem;pointer-events:none;z-index:1}
+  .pv-frame{width:100%;max-width:100%;height:100%;min-height:520px;background:#fff;border:0;border-radius:10px;transition:width .3s,height .3s;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+  .pv-frame.tablet{width:768px;max-width:100%}
+  .pv-frame.mobile{width:390px;max-width:100%}
+  .pv-warn{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);color:#FCD34D;padding:10px 14px;border-radius:10px;margin:0 auto 12px;font-size:.85rem;text-align:center;max-width:600px}
+  .pv-fallback{align-self:center;text-align:center;max-width:520px;color:#8FA8C7;padding:40px 20px}
+  .pv-fallback img{border-radius:12px;margin:0 auto 16px;max-height:50vh}
+  .pv-fallback .btn{margin-top:16px}
+  dialog.pv{width:min(1200px,96vw);height:92vh;max-height:92vh;padding:0;border:1px solid rgba(120,180,255,.12);border-radius:18px;background:#061224;color:#F0F6FF;overflow:hidden}
+  dialog.pv[open]{display:flex;flex-direction:column}
+  dialog::backdrop{background:rgba(2,8,18,.85);backdrop-filter:blur(4px)}
+  .pv-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid rgba(120,180,255,.12);background:#0E1E36}
+  .pv-bar h2{font-size:1rem;margin:0;margin-right:auto;color:#F0F6FF}
+  .pv-note{font-size:.78rem;color:#8FA8C7;padding:8px 16px;border-top:1px solid rgba(120,180,255,.12);background:#0E1E36}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo" aria-label="Fluxx Code — início">
+      <span class="logo-mark" data-logo-circle style="width:52px;height:52px"><img src="logo.png" alt="Fluxx Code"></span>
+      <span class="logo-text"><strong>FLUXX</strong><span>CODE</span></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="index.html#servicos">Serviços</a>
+      <a href="index.html#portfolio">Portfólio</a>
+      <a href="demos.html" aria-current="page" style="color:var(--texto)">Demonstrações</a>
+      <a href="index.html#processo">Processo</a>
+      <a href="index.html#avaliacoes">Avaliações</a>
+      <a href="index.html#contato">Contato</a>
+    </nav>
+    <div class="header-cta">
+      <a href="index.html#contato" class="btn btn-primary">Fale com a gente</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="subhero">
+  <div class="container">
+    <h1>Demonstrações de sites</h1>
+    <p>Modelos criados pela Fluxx Code para mostrar o que é possível em cada segmento. São exemplos, não clientes reais.</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:30px">
+  <div class="container">
+    <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria"></div>
+    <div class="pgrid" id="demoGrid" aria-live="polite">
+      <p class="empty-state">Carregando demonstrações…</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<dialog class="pv" id="pv" aria-labelledby="pvTitle">
+  <div class="pv-bar">
+    <h2 id="pvTitle"></h2>
+    <div class="chips" style="margin:0;gap:6px" id="devices" role="group" aria-label="Tamanho da tela">
+      <button class="chip" data-dev="" aria-pressed="true">🖥️ Computador</button>
+      <button class="chip" data-dev="tablet" aria-pressed="false">📱 Tablet</button>
+      <button class="chip" data-dev="mobile" aria-pressed="false">📲 Celular</button>
+    </div>
+    <a class="btn btn-ghost btn-sm" id="pvOpen" target="_blank" rel="noopener">↗ Abrir em nova aba</a>
+    <a class="btn btn-primary btn-sm" id="pvCta" target="_blank" rel="noopener">Quero um site assim</a>
+    <button class="btn btn-ghost btn-sm" id="pvClose" aria-label="Fechar preview">✕</button>
+  </div>
+  <div class="pv-stage" id="pvStage"></div>
+  <div class="pv-note" id="pvNote"></div>
+</dialog>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Fluxx Code. Todos os direitos reservados.</span>
+      <a href="index.html#contato" class="admin-link">Pedir orçamento</a>
+    </div>
+  </div>
+</footer>
+
+<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+
+<!-- VERSÃO NO SCRIPT PARA FORÇAR CACHE NOVO -->
+<script src="js/api.js?v=8.0.6"></script>
+<script src="js/store.js?v=8.0.6"></script>
+<script src="js/demos.js?v=8.0.6"></script>
+</body>
+</html>
